@@ -134,16 +134,24 @@ def main():
                 motor_num = IntPrompt.ask("Motor", default=1) - 1
                 if 0 <= motor_num < len(MOTOR_NAMES):
                     motor_name = MOTOR_NAMES[motor_num]
-                    current = bus.sync_read("Present_Position", [motor_name], normalize=False)
-                    console.print(f"[dim]Current: {current[motor_name]}[/dim]")
+                    bus.sync_write("Torque_Enable", {motor_name: 1}, normalize=False)
+                    console.print(f"[bold]{motor_name}[/bold] [dim](exit to return)[/dim]")
 
-                    pos = IntPrompt.ask("Target (0-4095)")
-                    if 0 <= pos <= 4095:
-                        bus.sync_write("Torque_Enable", {motor_name: 1}, normalize=False)
-                        bus.sync_write("Goal_Position", {motor_name: pos}, normalize=False)
-                        console.print(f"[green]Moving {motor_name} → {pos}[/green]")
-                    else:
-                        console.print("[red]Invalid position[/red]")
+                    while True:
+                        current = bus.sync_read("Present_Position", [motor_name], normalize=False)
+                        response = Prompt.ask(f"[dim]{current[motor_name]}[/dim] →")
+
+                        if response.lower() == "exit":
+                            break
+
+                        try:
+                            pos = int(response)
+                            if 0 <= pos <= 4095:
+                                bus.sync_write("Goal_Position", {motor_name: pos}, normalize=False)
+                            else:
+                                console.print("[red]0-4095[/red]")
+                        except ValueError:
+                            console.print("[red]Invalid[/red]")
                 else:
                     console.print("[red]Invalid motor[/red]")
             except ValueError:
