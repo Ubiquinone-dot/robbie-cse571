@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uv pip install:*)",
+      "Bash(test:*)",
+      "Bash(/Users/jbutch/Projects/lerobot/.venv/bin/pip show:*)",
+      "Bash(chmod:*)"
+    ]
+  }
+}

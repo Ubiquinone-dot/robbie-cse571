@@ -1,0 +1,15 @@
+default_position:
+  leader:
+    shoulder_pan: 2048
+    shoulder_lift: 2048
+    elbow_flex: 2048
+    wrist_flex: 2048
+    wrist_roll: 2048
+    gripper: 2048
+  follower:
+    shoulder_pan: 2048
+    shoulder_lift: 2048
+    elbow_flex: 2048
+    wrist_flex: 2048
+    wrist_roll: 2048
+    gripper: 2048
