@@ -1,17 +1,84 @@
-# Robot Operation By Behavioral Imitation Engine (R.O.B.B.I.E.)
+# R.O.B.B.I.E.
+**Robot Operation By Behavioral Imitation Engine**
 
-# Follower calibration
-```
-lerobot-calibrate \
-    --robot.type=so101_leader \
-    --robot.port=/dev/tty.usbmodem5AE60552931 \
-    --robot.id=leader_arm
+SO-101 dual-arm teleoperation and control.
+
+## Setup
+
+### Install uv (if needed)
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-# Leader
+### Install dependencies
+```bash
+uv sync
 ```
-lerobot-calibrate \
-    --teleop.type=so101_leader \
-    --teleop.port=/dev/tty.usbmodem5AE60552931 \
-    --teleop.id=leader_arm
+
+### Configure ports
+Create a `.env` file with your arm ports:
+```bash
+LEADER_ARM_PORT=/dev/tty.usbmodem58760431551
+FOLLOWER_ARM_PORT=/dev/tty.usbmodem58760431541
 ```
+
+Find ports with:
+```bash
+ls /dev/tty.usbmodem*
+```
+
+## Scripts
+
+### calibrate.py
+Calibrate leader and/or follower arms. Run this first.
+```bash
+uv run python calibrate.py
+```
+
+### teleoperate.py
+Control the follower arm by moving the leader arm.
+```bash
+uv run python teleoperate.py
+```
+Press `Ctrl+C` to stop.
+
+### test_motors.py
+Interactive motor testing and diagnostics.
+```bash
+uv run python test_motors.py
+```
+
+Commands:
+| Key | Action |
+|-----|--------|
+| `r` | Read motor positions |
+| `m` | Move single motor |
+| `s` | Run test sequence |
+| `return` | Go to default position |
+| `relax` | Disable torque (free movement) |
+| `hold` | Enable torque (lock position) |
+| `q` | Quit |
+
+## Configuration
+
+### config.yaml
+Default positions for each arm:
+```yaml
+default_position:
+  leader:
+    shoulder_pan: 2048
+    shoulder_lift: 2048
+    elbow_flex: 2048
+    wrist_flex: 2048
+    wrist_roll: 2048
+    gripper: 2048
+  follower:
+    shoulder_pan: 2048
+    shoulder_lift: 2048
+    elbow_flex: 2048
+    wrist_flex: 2048
+    wrist_roll: 2048
+    gripper: 2048
+```
+
+Use `test_motors.py` → `r` to read current positions, then update the config.

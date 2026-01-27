@@ -3,50 +3,43 @@
 import os
 
 from dotenv import load_dotenv
+from rich.console import Console
+from rich.live import Live
+from rich.table import Table
+
 from lerobot.teleoperators.so_leader import SO101LeaderConfig, SO101Leader
 from lerobot.robots.so_follower import SO101FollowerConfig, SO101Follower
 
 load_dotenv()
 
+console = Console()
 LEADER_PORT = os.getenv("LEADER_ARM_PORT")
 FOLLOWER_PORT = os.getenv("FOLLOWER_ARM_PORT")
 
 
 def main():
-    print(f"Leader arm:   {LEADER_PORT}")
-    print(f"Follower arm: {FOLLOWER_PORT}")
+    console.print(f"[dim]Leader:[/dim]   {LEADER_PORT}")
+    console.print(f"[dim]Follower:[/dim] {FOLLOWER_PORT}")
 
-    robot_config = SO101FollowerConfig(
-        port=FOLLOWER_PORT,
-        id="follower_arm",
-    )
+    robot = SO101Follower(SO101FollowerConfig(port=FOLLOWER_PORT, id="follower_arm"))
+    teleop = SO101Leader(SO101LeaderConfig(port=LEADER_PORT, id="leader_arm"))
 
-    teleop_config = SO101LeaderConfig(
-        port=LEADER_PORT,
-        id="leader_arm",
-    )
+    with console.status("[bold]Connecting..."):
+        robot.connect()
+        teleop.connect()
 
-    robot = SO101Follower(robot_config)
-    teleop_device = SO101Leader(teleop_config)
-
-    print("\nConnecting to follower...")
-    robot.connect()
-    print("Connecting to leader...")
-    teleop_device.connect()
-
-    print("\nTeleoperation active! Move the leader arm to control the follower.")
-    print("Press Ctrl+C to stop.\n")
+    console.print("[green]Connected[/green] — Move leader to control follower")
+    console.print("[dim]Ctrl+C to stop[/dim]\n")
 
     try:
         while True:
-            action = teleop_device.get_action()
-            robot.send_action(action)
+            robot.send_action(teleop.get_action())
     except KeyboardInterrupt:
-        print("\n\nStopping teleoperation...")
+        console.print("\n[yellow]Stopping...[/yellow]")
     finally:
-        teleop_device.disconnect()
+        teleop.disconnect()
         robot.disconnect()
-        print("Disconnected.")
+        console.print("[dim]Disconnected[/dim]")
 
 
 if __name__ == "__main__":
