@@ -6,6 +6,10 @@ dependencies = [
     "lerobot[aloha,dynamixel,feetech,intelrealsense,pusht]>=0.4.3",
     "python-dotenv>=1.0.0",
     "rich>=13.0.0",
+    "flask>=3.0.0",
+    "opencv-python>=4.8.0",
+    "rerun-sdk>=0.18.0",
+    "matplotlib>=3.10.8",
 ]
 
 [tool.uv]

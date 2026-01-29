@@ -4,7 +4,13 @@
       "Bash(uv pip install:*)",
       "Bash(test:*)",
       "Bash(/Users/jbutch/Projects/lerobot/.venv/bin/pip show:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(ls:*)",
+      "Bash(huggingface-cli upload:*)",
+      "Bash(huggingface-cli repo files:*)",
+      "Bash(hf repo files:*)",
+      "Bash(uv run python:*)",
+      "Bash(uv add:*)"
     ]
   }
 }
