@@ -10,6 +10,12 @@ SO-101 dual-arm teleoperation and control.
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
+### Install Git LFS (for model checkpoints)
+```bash
+brew install git-lfs
+git lfs install
+```
+
 ### Install dependencies
 ```bash
 uv sync
