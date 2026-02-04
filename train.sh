@@ -25,6 +25,6 @@ lerobot-train \
     --policy.type=act \
     --output_dir=outputs/train/act_so101_test \
     --job_name=act_so101_test \
-    --policy.device=cuda \
+    --policy.device=mps \
     --wandb.enable=true \
     --policy.repo_id=${HF_USER}/my_policy

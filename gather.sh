@@ -8,8 +8,8 @@ set +a
 
 # Configuration
 TASK="${INSTRUCTION:-Grab the black cube}"
-DATASET_NAME="${DATASET:-record-prod}"
-NUM_EPISODES="${NUM_EPISODES:-10}"
+DATASET_NAME="${DATASET:-record-prod5}"
+NUM_EPISODES="${NUM_EPISODES:-5}"
 FPS="${FPS:-30}"
 WIDTH="${WIDTH:-640}"
 HEIGHT="${HEIGHT:-480}"
