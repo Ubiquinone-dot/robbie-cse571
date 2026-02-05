@@ -1,0 +1,90 @@
+INFO 2026-01-28 16:31:28 db_utils.py:102 [1m[34mLogs will be synced with wandb.[0m
+INFO 2026-01-28 16:31:28 db_utils.py:103 Track this run --> [1m[33mhttps://wandb.ai/jbutch/lerobot/runs/25116ssa[0m
+INFO 2026-01-28 16:31:28 ot_train.py:215 Creating dataset
+INFO 2026-01-28 16:31:28 ot_train.py:233 Creating policy
+Downloading: "https://download.pytorch.org/models/resnet18-f37072fd.pth" to /Users/jbutch/.cache/torch/hub/checkpoints/resnet18-f37072fd.pth
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 44.7M/44.7M [00:00<00:00, 76.6MB/s]
+INFO 2026-01-28 16:31:29 ot_train.py:288 Creating optimizer and scheduler
+INFO 2026-01-28 16:31:29 ot_train.py:323 [1m[33mOutput dir:[0m outputs/train/act_so101_test
+INFO 2026-01-28 16:31:29 ot_train.py:330 cfg.steps=100000 (100K)
+INFO 2026-01-28 16:31:29 ot_train.py:331 dataset.num_frames=4365 (4K)
+INFO 2026-01-28 16:31:29 ot_train.py:332 dataset.num_episodes=10
+INFO 2026-01-28 16:31:29 ot_train.py:335 Effective batch size: 8 x 1 = 8
+INFO 2026-01-28 16:31:29 ot_train.py:336 num_learnable_params=51597190 (52M)
+INFO 2026-01-28 16:31:29 ot_train.py:337 num_total_params=51597190 (52M)
+INFO 2026-01-28 16:31:29 ot_train.py:393 Start offline training on a fixed dataset, with effective batch size: 8
+Traceback (most recent call last):
+  File "/Users/jbutch/Projects/lerobot/.venv/bin/lerobot-train", line 10, in <module>
+    sys.exit(main())
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/lerobot/scripts/lerobot_train.py", line 532, in main
+    train()
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/lerobot/configs/parser.py", line 233, in wrapper_inner
+    response = fn(cfg, *args, **kwargs)
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/lerobot/scripts/lerobot_train.py", line 399, in train
+    batch = next(dl_iter)
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/lerobot/datasets/utils.py", line 912, in cycle
+    yield next(iterator)
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/accelerate/data_loader.py", line 567, in __iter__
+    current_batch = next(dataloader_iter)
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 733, in __next__
+    data = self._next_data()
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1515, in _next_data
+    return self._process_data(data, worker_id)
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1550, in _process_data
+    data.reraise()
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torch/_utils.py", line 750, in reraise
+    raise exception
+RuntimeError: Caught RuntimeError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torch/utils/data/_utils/worker.py", line 349, in _worker_loop
+    data = fetcher.fetch(index)  # type: ignore[possibly-undefined]
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torch/utils/data/_utils/fetch.py", line 52, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torch/utils/data/_utils/fetch.py", line 52, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/lerobot/datasets/lerobot_dataset.py", line 1067, in __getitem__
+    video_frames = self._query_videos(query_timestamps, ep_idx)
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/lerobot/datasets/lerobot_dataset.py", line 1030, in _query_videos
+    frames = decode_video_frames(video_path, shifted_query_ts, self.tolerance_s, self.video_backend)
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/lerobot/datasets/video_utils.py", line 69, in decode_video_frames
+    return decode_video_frames_torchcodec(video_path, timestamps, tolerance_s)
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/lerobot/datasets/video_utils.py", line 248, in decode_video_frames_torchcodec
+    decoder = decoder_cache.get_decoder(str(video_path))
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/lerobot/datasets/video_utils.py", line 184, in get_decoder
+    from torchcodec.decoders import VideoDecoder
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torchcodec/__init__.py", line 10, in <module>
+    from . import decoders, samplers  # noqa
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torchcodec/decoders/__init__.py", line 7, in <module>
+    from .._core import AudioStreamMetadata, VideoStreamMetadata
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torchcodec/_core/__init__.py", line 8, in <module>
+    from ._metadata import (
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torchcodec/_core/_metadata.py", line 16, in <module>
+    from torchcodec._core.ops import (
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torchcodec/_core/ops.py", line 84, in <module>
+    load_torchcodec_shared_libraries()
+  File "/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torchcodec/_core/ops.py", line 69, in load_torchcodec_shared_libraries
+    raise RuntimeError(
+RuntimeError: Could not load libtorchcodec. Likely causes:
+          1. FFmpeg is not properly installed in your environment. We support
+             versions 4, 5, 6 and 7.
+          2. The PyTorch version (2.7.1) is not compatible with
+             this version of TorchCodec. Refer to the version compatibility
+             table:
+             https://github.com/pytorch/torchcodec?tab=readme-ov-file#installing-torchcodec.
+          3. Another runtime dependency; see exceptions below.
+        The following exceptions were raised as we tried to load libtorchcodec:
+
+[start of libtorchcodec loading traceback]
+FFmpeg version 7: dlopen(/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torchcodec/libtorchcodec_core7.dylib, 0x0006): Library not loaded: @rpath/libavutil.59.dylib
+  Referenced from: <7658305C-514F-389C-A127-88B03273F301> /Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torchcodec/libtorchcodec_core7.dylib
+  Reason: no LC_RPATH's found
+FFmpeg version 6: dlopen(/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torchcodec/libtorchcodec_core6.dylib, 0x0006): Library not loaded: @rpath/libavutil.58.dylib
+  Referenced from: <FDFFFA1D-FEEE-3351-9B31-EDAB7FFA7C7A> /Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torchcodec/libtorchcodec_core6.dylib
+  Reason: no LC_RPATH's found
+FFmpeg version 5: dlopen(/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torchcodec/libtorchcodec_core5.dylib, 0x0006): Library not loaded: @rpath/libavutil.57.dylib
+  Referenced from: <73CA3852-94E8-3425-A461-BEC2C47C4AB2> /Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torchcodec/libtorchcodec_core5.dylib
+  Reason: no LC_RPATH's found
+FFmpeg version 4: dlopen(/Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torchcodec/libtorchcodec_core4.dylib, 0x0006): Library not loaded: @rpath/libavutil.56.dylib
+  Referenced from: <63BE5F91-CE15-390D-B808-4AD4AE5AE87C> /Users/jbutch/Projects/lerobot/.venv/lib/python3.10/site-packages/torchcodec/libtorchcodec_core4.dylib
+  Reason: no LC_RPATH's found
+[end of libtorchcodec loading traceback].

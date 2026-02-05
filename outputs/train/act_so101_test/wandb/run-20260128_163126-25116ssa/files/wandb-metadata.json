@@ -1,0 +1,45 @@
+{
+  "os": "macOS-14.6.1-arm64-arm-64bit",
+  "python": "CPython 3.10.19",
+  "startedAt": "2026-01-29T00:31:26.669056Z",
+  "args": [
+    "--dataset.repo_id=Jbutch/record-prod",
+    "--policy.type=act",
+    "--output_dir=outputs/train/act_so101_test",
+    "--job_name=act_so101_test",
+    "--policy.device=mps",
+    "--wandb.enable=true",
+    "--policy.repo_id=Jbutch/my_policy"
+  ],
+  "program": "/Users/jbutch/Projects/lerobot/.venv/bin/lerobot-train",
+  "codePath": ".venv/bin/lerobot-train",
+  "codePathLocal": ".venv/bin/lerobot-train",
+  "git": {
+    "remote": "https://github.com/Ubiquinone-dot/robbie-cse571.git",
+    "commit": "d27ae049f389a65d4c5d43a505a1dfcb4a930a40"
+  },
+  "root": "outputs/train/act_so101_test",
+  "host": "Jaspers-MacBook-Pro.local",
+  "executable": "/Users/jbutch/Projects/lerobot/.venv/bin/python3",
+  "cpu_count": 8,
+  "cpu_count_logical": 8,
+  "disk": {
+    "/": {
+      "total": "494384795648",
+      "used": "246895222784"
+    }
+  },
+  "memory": {
+    "total": "17179869184"
+  },
+  "apple": {
+    "name": "Apple M3",
+    "ecpuCores": 4,
+    "pcpuCores": 4,
+    "gpuCores": 10,
+    "memoryGb": 16,
+    "swapTotalBytes": "4294967296",
+    "ramTotalBytes": "17179869184"
+  },
+  "writerId": "4io7iw197pxtq0azwvmql8e8a4uleont"
+}

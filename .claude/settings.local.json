@@ -12,7 +12,11 @@
       "Bash(uv run python:*)",
       "Bash(uv add:*)",
       "Bash(brew list:*)",
-      "Bash(brew --prefix:*)"
+      "Bash(brew --prefix:*)",
+      "Bash(git lfs install:*)",
+      "Bash(brew install:*)",
+      "Bash(git lfs track:*)",
+      "Bash(git add:*)"
     ]
   }
 }
