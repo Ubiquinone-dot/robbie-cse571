@@ -1,9 +1,15 @@
 #!/bin/bash
 #SBATCH --job-name=act_so101_test
+#SBATCH --partition=gpu-train
 #SBATCH --output=outputs/train/slurm-%j.out
 #SBATCH --error=outputs/train/slurm-%j.err
-#SBATCH --gres=gpu:1
-#SBATCH --time=24:00:00
+#SBATCH --gres=gpu:l40:1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=23:59:00
+
+# Create output directory if it doesn't exist
+mkdir -p outputs/train
 
 # Activate virtual environment
 source .venv/bin/activate

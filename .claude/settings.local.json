@@ -11,12 +11,19 @@
       "Bash(hf repo files:*)",
       "Bash(uv run python:*)",
       "Bash(uv add:*)",
-      "Bash(brew list:*)",
-      "Bash(brew --prefix:*)",
-      "Bash(git lfs install:*)",
-      "Bash(brew install:*)",
-      "Bash(git lfs track:*)",
-      "Bash(git add:*)"
+      "Bash(uv sync:*)",
+      "Bash(quota:*)",
+      "Bash(uv cache clean:*)",
+      "Bash(export UV_CACHE_DIR=/tmp/uv-cache-$USER)",
+      "Bash(command -v sbatch:*)",
+      "Bash(du:*)",
+      "Bash(sinfo:*)",
+      "Bash(conda clean:*)",
+      "WebSearch",
+      "Bash(uv run:*)",
+      "Bash(squeue:*)",
+      "Bash(huggingface-cli whoami:*)",
+      "Bash(source:*)"
     ]
   }
 }
