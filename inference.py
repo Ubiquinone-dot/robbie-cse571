@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
-"""Run policy inference on SO101 follower arm."""
+"""Run policy inference on SO101 follower arm.
 
+Supports ACT and pi0.5 policies from HuggingFace or local checkpoints.
+"""
+
+import json
 import os
+import subprocess
 import sys
 from datetime import datetime
 
@@ -11,8 +16,7 @@ from lerobot.cameras.opencv.configuration_opencv import OpenCVCameraConfig
 from lerobot.datasets.lerobot_dataset import LeRobotDataset
 from lerobot.datasets.pipeline_features import aggregate_pipeline_dataset_features, create_initial_features
 from lerobot.datasets.utils import combine_feature_dicts
-from lerobot.policies.act.modeling_act import ACTPolicy
-from lerobot.policies.factory import make_pre_post_processors
+from lerobot.policies.factory import make_policy, make_policy_config, make_pre_post_processors
 from lerobot.processor import make_default_processors
 from lerobot.robots.so_follower import SO101FollowerConfig, SO101Follower
 from lerobot.scripts.lerobot_record import record_loop
@@ -27,9 +31,9 @@ NUM_EPISODES = 5
 FPS = 30
 EPISODE_TIME_SEC = 40
 RESET_TIME_SEC = 10
-TASK_DESCRIPTION = "pick up the black cube"
+TASK_DESCRIPTION = "Grab the black cube"
 
-# Available policies on Hugging Face
+# Available policies on Hugging Face (all ACT)
 HF_POLICIES = {
     "ep25": "Jbutch/policy_ep25",
     "ep10": "Jbutch/policy_ep10",
@@ -39,6 +43,8 @@ HF_POLICIES = {
 # Local checkpoints (pretrained_model directory)
 LOCAL_POLICIES = {
     "multi_p2_8gpu_ep48": "checkpoints/multi_p2_8gpu_ep48/pretrained_model",
+    "pi05_p2": "checkpoints/pi05_p2/pretrained_model",
+    "pi0_5": "checkpoints/pi0_5/pretrained_model",
 }
 
 # Get policy from command line, env var, or default
@@ -67,13 +73,25 @@ if not FOLLOWER_PORT:
     print("Error: FOLLOWER_ARM_PORT not set in .env")
     sys.exit(1)
 
+# Detect policy type from checkpoint config
+def detect_policy_type(path):
+    config_path = os.path.join(path, "config.json")
+    if os.path.exists(config_path):
+        with open(config_path) as f:
+            return json.load(f)["type"]
+    return "act"  # default for HF policies
+
+POLICY_TYPE = detect_policy_type(POLICY_REPO) if IS_LOCAL else "act"
+
 # Dataset ID with timestamp
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 HF_DATASET_ID = f"{HF_USER}/eval_{POLICY_KEY}_{timestamp}"
 
 print(f"Running inference with:")
 print(f"  Policy: {POLICY_KEY} ({POLICY_REPO})")
+print(f"  Type: {POLICY_TYPE}")
 print(f"  Follower port: {FOLLOWER_PORT}")
+print(f"  Camera index: {CAMERA_INDEX}")
 print(f"  Task: {TASK_DESCRIPTION}")
 print(f"  Dataset: {HF_DATASET_ID}")
 print()
@@ -96,10 +114,21 @@ robot_config = SO101FollowerConfig(
 # Initialize the robot
 robot = SO101Follower(robot_config)
 
-# Initialize the policy from Hugging Face
-print(f"Loading policy from {POLICY_REPO}...")
-policy = ACTPolicy.from_pretrained(POLICY_REPO)
-policy.to("mps")  # Use MPS on macOS
+# Load the policy
+print(f"Loading {POLICY_TYPE} policy from {POLICY_REPO}...")
+if POLICY_TYPE == "act":
+    from lerobot.policies.act.modeling_act import ACTPolicy
+    policy = ACTPolicy.from_pretrained(POLICY_REPO)
+elif POLICY_TYPE == "pi05":
+    from lerobot.policies.pi05.modeling_pi05 import PI05Policy
+    policy = PI05Policy.from_pretrained(POLICY_REPO)
+else:
+    print(f"Error: Unsupported policy type '{POLICY_TYPE}'")
+    sys.exit(1)
+
+# Use MPS on macOS, with float32 for pi05 (bfloat16 not supported on MPS)
+DEVICE = "mps"
+policy.to(DEVICE)
 policy.eval()
 print("Policy loaded.")
 
@@ -148,7 +177,7 @@ preprocessor, postprocessor = make_pre_post_processors(
     pretrained_path=POLICY_REPO,
     dataset_stats=dataset.meta.stats,
     preprocessor_overrides={
-        "device_processor": {"device": "mps"},
+        "device_processor": {"device": DEVICE},
     },
 )
 
@@ -215,5 +244,8 @@ finally:
     # Reset arm to home position
     from reset import main as reset_main
     reset_main()
+
+    # Kill any zombie processes holding camera/serial ports
+    subprocess.run(["./cleanup.sh"], cwd=os.path.dirname(os.path.abspath(__file__)))
 
     log_say("Done")

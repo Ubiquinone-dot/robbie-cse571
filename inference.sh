@@ -1,14 +1,17 @@
 #!/bin/bash
 set -e
 
+# Kill any zombie processes from previous runs
+./cleanup.sh 2>/dev/null || true
+
 # Load environment variables
 if [ -f .env ]; then
     export $(grep -v '^#' .env | xargs)
 fi
 
-# Default values
-CHECKPOINT="${1:-ep25}"
-INSTRUCTION="${2:-pick up the black cube}"
+# Default values (CHECKPOINT from .env or arg)
+CHECKPOINT="${1:-${CHECKPOINT:-ep25}}"
+INSTRUCTION="${2:-Grab the black cube}"
 N_PICKUPS="${3:-5}"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 EVAL_DATASET="${4:-eval_${CHECKPOINT}_${TIMESTAMP}}"
@@ -26,9 +29,20 @@ if [ ! -d "$POLICY_PATH" ]; then
     exit 1
 fi
 
+# Auto-detect policy type from config.json
+POLICY_TYPE="act"
+if [ -f "${POLICY_PATH}/config.json" ]; then
+    DETECTED=$(python3 -c "import json; print(json.load(open('${POLICY_PATH}/config.json'))['type'])" 2>/dev/null)
+    if [ -n "$DETECTED" ]; then
+        POLICY_TYPE="$DETECTED"
+    fi
+fi
+
 echo "Running inference with:"
 echo "  Checkpoint: ${CHECKPOINT}"
+echo "  Policy type: ${POLICY_TYPE}"
 echo "  Policy path: ${POLICY_PATH}"
+echo "  Camera index: ${CAM_IDX}"
 echo "  Follower port: ${FOLLOWER_ARM_PORT}"
 echo "  Task: ${INSTRUCTION}"
 echo "  Pickups: ${N_PICKUPS}"
@@ -41,7 +55,7 @@ for i in $(seq 1 $N_PICKUPS); do
     # Move to home position before inference
     source ./reset.sh
 
-    uv run lerobot-record \
+    echo "" | uv run lerobot-record \
         --robot.type=so101_follower \
         --robot.port="${FOLLOWER_ARM_PORT}" \
         --robot.id=my_follower \
@@ -53,12 +67,12 @@ for i in $(seq 1 $N_PICKUPS); do
         --dataset.num_episodes=1 \
         --dataset.episode_time_s=20 \
         --dataset.reset_time_s=0 \
-        --policy.type=act \
+        --policy.type="${POLICY_TYPE}" \
         --policy.pretrained_path="${POLICY_PATH}" \
         --policy.device=mps || true
-
 done
 
 source ./reset.sh
+./cleanup.sh
 
 echo "=== Completed $N_PICKUPS pickups ==="

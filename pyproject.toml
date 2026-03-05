@@ -3,13 +3,17 @@ name = "lerobot-workspace"
 version = "0.1.0"
 requires-python = ">=3.10"
 dependencies = [
-    "lerobot[dynamixel,feetech]>=0.4.3",
+    "lerobot[dynamixel,feetech,pi05]>=0.4.3",
     "python-dotenv>=1.0.0",
     "rich>=13.0.0",
     "flask>=3.0.0",
     "opencv-python>=4.8.0",
     "matplotlib>=3.10.8",
+    "transformers>=4.57.6",
 ]
 
 [tool.uv]
 dev-dependencies = []
+
+[tool.uv.sources]
+transformers = { git = "https://github.com/huggingface/transformers.git", rev = "fix/lerobot_openpi" }
