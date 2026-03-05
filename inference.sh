@@ -15,6 +15,7 @@ EVAL_DATASET="${4:-eval_${CHECKPOINT}_${TIMESTAMP}}"
 
 # Extract HF username from HF_REPO_ID (format: username/repo)
 HF_USER="${HF_REPO_ID%%/*}"
+CAM_IDX="${CAMERA_INDEX:-0}"
 
 # Validate checkpoint exists
 POLICY_PATH="checkpoints/${CHECKPOINT}/pretrained_model"
@@ -44,7 +45,7 @@ for i in $(seq 1 $N_PICKUPS); do
         --robot.type=so101_follower \
         --robot.port="${FOLLOWER_ARM_PORT}" \
         --robot.id=my_follower \
-        --robot.cameras='{ front: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30} }' \
+        --robot.cameras="{ front: {type: opencv, index_or_path: ${CAM_IDX}, width: 640, height: 480, fps: 30} }" \
         --display_data=false \
         --dataset.repo_id="${HF_USER}/${EVAL_DATASET}_${i}" \
         --dataset.single_task="${INSTRUCTION}" \
@@ -57,5 +58,7 @@ for i in $(seq 1 $N_PICKUPS); do
         --policy.device=mps || true
 
 done
+
+source ./reset.sh
 
 echo "=== Completed $N_PICKUPS pickups ==="

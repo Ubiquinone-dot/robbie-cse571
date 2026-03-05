@@ -36,19 +36,31 @@ HF_POLICIES = {
     "ep5": "Jbutch/policy_ep5",
 }
 
-# Get policy from command line or use default
-POLICY_KEY = sys.argv[1] if len(sys.argv) > 1 else "ep25"
-if POLICY_KEY not in HF_POLICIES:
+# Local checkpoints (pretrained_model directory)
+LOCAL_POLICIES = {
+    "multi_p2_8gpu_ep48": "checkpoints/multi_p2_8gpu_ep48/pretrained_model",
+}
+
+# Get policy from command line, env var, or default
+POLICY_KEY = sys.argv[1] if len(sys.argv) > 1 else os.getenv("CHECKPOINT", "ep25")
+NUM_EPISODES = int(sys.argv[2]) if len(sys.argv) > 2 else NUM_EPISODES
+
+IS_LOCAL = POLICY_KEY in LOCAL_POLICIES
+if not IS_LOCAL and POLICY_KEY not in HF_POLICIES:
     print(f"Error: Unknown policy '{POLICY_KEY}'")
-    print("Available policies:")
+    print("Available policies (HF):")
     for key, repo in HF_POLICIES.items():
         print(f"  - {key} ({repo})")
+    print("Available policies (local):")
+    for key, path in LOCAL_POLICIES.items():
+        print(f"  - {key} ({path})")
     sys.exit(1)
 
-POLICY_REPO = HF_POLICIES[POLICY_KEY]
+POLICY_REPO = LOCAL_POLICIES[POLICY_KEY] if IS_LOCAL else HF_POLICIES[POLICY_KEY]
 
 # Get ports from environment
 FOLLOWER_PORT = os.getenv("FOLLOWER_ARM_PORT")
+CAMERA_INDEX = int(os.getenv("CAMERA_INDEX", "0"))
 HF_USER = os.getenv("HF_REPO_ID", "").split("/")[0]
 
 if not FOLLOWER_PORT:
@@ -69,7 +81,7 @@ print()
 # Create the robot configuration
 camera_config = {
     "front": OpenCVCameraConfig(
-        index_or_path=0,
+        index_or_path=CAMERA_INDEX,
         width=640,
         height=480,
         fps=FPS,
@@ -121,9 +133,13 @@ dataset = LeRobotDataset.create(
 # Initialize the keyboard listener
 listener, events = init_keyboard_listener()
 
-# Connect the robot
+# Connect the robot (auto-accept calibration prompt)
 print("Connecting to robot...")
+import builtins
+_original_input = builtins.input
+builtins.input = lambda prompt="": (_original_input(prompt) if sys.stdin.isatty() else "")
 robot.connect()
+builtins.input = _original_input
 print("Robot connected.")
 
 # Create pre/post processors with device override for macOS
@@ -196,7 +212,8 @@ finally:
 
     dataset.finalize()
 
-    # Optionally push to hub
-    # dataset.push_to_hub()
+    # Reset arm to home position
+    from reset import main as reset_main
+    reset_main()
 
     log_say("Done")

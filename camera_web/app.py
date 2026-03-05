@@ -19,7 +19,7 @@ app = Flask(__name__)
 
 # Camera configuration
 CAMERA_CONFIG = OpenCVCameraConfig(
-    index_or_path=0,
+    index_or_path=1,
     fps=15,
     width=1920,
     height=1080,
