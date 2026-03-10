@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/jbutch/Projects/MT25/robbie-cse571/.venv/bin/lerobot-train", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/mnt/home/jbutch/Projects/MT25/robbie-cse571/.venv/lib/python3.11/site-packages/lerobot/scripts/lerobot_train.py", line 532, in main
+    train()
+  File "/mnt/home/jbutch/Projects/MT25/robbie-cse571/.venv/lib/python3.11/site-packages/lerobot/configs/parser.py", line 233, in wrapper_inner
+    response = fn(cfg, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/home/jbutch/Projects/MT25/robbie-cse571/.venv/lib/python3.11/site-packages/lerobot/scripts/lerobot_train.py", line 168, in train
+    cfg.validate()
+  File "/mnt/home/jbutch/Projects/MT25/robbie-cse571/.venv/lib/python3.11/site-packages/lerobot/configs/train.py", line 120, in validate
+    raise FileExistsError(
+FileExistsError: Output directory outputs/train/act_so101_test already exists and resume is False. Please change your output directory so that outputs/train/act_so101_test is not overwritten.

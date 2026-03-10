@@ -23,7 +23,8 @@
       "Bash(uv run:*)",
       "Bash(squeue:*)",
       "Bash(huggingface-cli whoami:*)",
-      "Bash(source:*)"
+      "Bash(source:*)",
+      "Bash(git commit:*)"
     ]
   }
 }
